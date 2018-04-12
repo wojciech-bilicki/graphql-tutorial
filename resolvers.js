@@ -1,32 +1,27 @@
-const authors = [
-  {
-    id: 1,
-    name: 'JK Rowling',
-    age: 50,
-    Books: ["Harry Potter and the Goblet of Fire", "Harry Potter and the Prisoner of Azkaban"]
-  },
-  {
-    id: 2,
-    name: 'George RR Marting',
-    age: 70,
-    Books: ["GOT - Song of Ice and Fire", "GOT - A Dance with Dragons"]
-  },
-  {
-    id: 3,
-    name: 'Stephen King',
-    age: 64,
-    Books: ["It", "Carrie"]
-  }
-];
+import mongoose from 'mongoose'
+import authorModel from './models/author'
+
 
 const resolvers = {
   Query: {
     authors: () => {
-      return authors
+      return authorModel.find()
     },
     author: (root, args) => {
       const id = args.id;
-      return authors.find(author => author.id === id);
+      return authorModel.findOne({id: id});
+    }
+  },
+  Mutation: {
+    addAuthor: (root, {name, age, Books}) => {
+      const author = new authorModel({name, age, Books})
+      return author.save()
+    },
+    deleteAuthor: (root, {id}) => {
+        return authorModel.findOneAndRemove({id: id})
+    },
+    updateAuthor:(root, {id, name})=> {
+        return authorModel.findOneAndUpdate({id:id}, {name})
     }
   }
 }
